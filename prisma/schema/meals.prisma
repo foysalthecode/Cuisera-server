@@ -1,0 +1,22 @@
+model Meals {
+    id          Int        @id @default(autoincrement())
+    title       String
+    description String
+    thumbnail   String?
+    isPublished Boolean    @default(true)
+    status      MealStatus
+    review      String?
+    category    String
+    createdAt   DateTime   @default(now())
+    updatedAt   DateTime   @updatedAt
+    customerId  Int
+    customer    Customer   @relation(fields: [customerId], references: [id])
+    orders      Orders[]
+    feedback    Feedback[]
+}
+
+enum MealStatus {
+    PUBLISHED
+    DRAFT
+    CANCELED
+}

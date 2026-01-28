@@ -1,0 +1,7 @@
+model Orders {
+    id         Int      @id @default(autoincrement())
+    customerId Int
+    customer   Customer @relation(fields: [customerId], references: [id])
+    mealId     Int
+    meals      Meals    @relation(fields: [mealId], references: [id])
+}

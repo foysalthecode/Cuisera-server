@@ -1,0 +1,9 @@
+model Feedback {
+    id         Int      @id @default(autoincrement())
+    content    String
+    review     Int
+    customerId Int
+    customer   Customer @relation(fields: [customerId], references: [id])
+    mealId     Int
+    meal       Meals    @relation(fields: [mealId], references: [id])
+}
