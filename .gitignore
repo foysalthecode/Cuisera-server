@@ -2,4 +2,5 @@ node_modules
 .env
 dist
 build
+/generated
 /generated/prisma

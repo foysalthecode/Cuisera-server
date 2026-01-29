@@ -1,7 +1,6 @@
 model Orders {
-    id         Int      @id @default(autoincrement())
-    customerId Int
-    customer   Customer @relation(fields: [customerId], references: [id])
-    mealId     Int
+    id         String   @id @default(uuid())
+    customerId String
+    mealId     String
     meals      Meals    @relation(fields: [mealId], references: [id])
 }

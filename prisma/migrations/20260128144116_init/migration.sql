@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Meals" ALTER COLUMN "status" SET DEFAULT 'PUBLISHED';
