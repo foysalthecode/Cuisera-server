@@ -12,6 +12,7 @@ model User {
   sessions      Session[]
   accounts      Account[]
   orders        Orders[]
+  meals         Meals[]
 
   @@unique([email])
   @@map("user")
