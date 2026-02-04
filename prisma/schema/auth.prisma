@@ -11,6 +11,7 @@ model User {
   status        String?   @default("ACTIVE")
   sessions      Session[]
   accounts      Account[]
+  orders        Orders[]
 
   @@unique([email])
   @@map("user")

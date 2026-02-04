@@ -1,6 +1,7 @@
 model Orders {
-    id         String   @id @default(uuid())
-    customerId String
-    mealId     String
-    meals      Meals    @relation(fields: [mealId], references: [id])
+    id     String @id @default(uuid())
+    userId String
+    user   User   @relation(fields: [userId], references: [id])
+    mealId String
+    meals  Meals  @relation(fields: [mealId], references: [id])
 }
