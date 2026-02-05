@@ -1,11 +1,12 @@
 model Feedback {
-    id         String   @id @default(uuid())
-    content    String
-    review     Int
-    customerId String
-    mealId     String
-    meal       Meals    @relation(fields: [mealId], references: [id])
+    id      String @id @default(uuid())
+    content String
+    review  Int
+    userId  String
+    user    User   @relation(fields: [userId], references: [id])
+    mealId  String
+    meal    Meals  @relation(fields: [mealId], references: [id])
 
-    @@index([customerId])
+    @@index([userId])
     @@index([mealId])
 }

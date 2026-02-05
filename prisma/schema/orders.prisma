@@ -1,7 +1,15 @@
 model Orders {
-    id     String @id @default(uuid())
+    id     String      @id @default(uuid())
+    status OrderStatus @default(PREPARING)
     userId String
-    user   User   @relation(fields: [userId], references: [id])
+    user   User        @relation(fields: [userId], references: [id])
     mealId String
-    meals  Meals  @relation(fields: [mealId], references: [id])
+    meals  Meals       @relation(fields: [mealId], references: [id])
+}
+
+enum OrderStatus {
+    CANCEL
+    PREPARING
+    READY
+    DELIVERD
 }

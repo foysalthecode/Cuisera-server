@@ -1,21 +1,27 @@
 model User {
-  id            String    @id
+  id            String     @id
   name          String
   email         String
-  emailVerified Boolean   @default(false)
+  emailVerified Boolean    @default(false)
   image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  role          String?   @default("USER")
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  role          String?    @default("USER")
   phone         String?
-  status        String?   @default("ACTIVE")
+  status        userStatus @default(ACTIVE)
   sessions      Session[]
   accounts      Account[]
-  orders        Orders[]
+  feedbacks     Feedback[]
   meals         Meals[]
+  orders        Orders[]
 
   @@unique([email])
   @@map("user")
+}
+
+enum userStatus {
+  ACTIVE
+  STALLED
 }
 
 model Session {
@@ -64,4 +70,9 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+enum customerStatus {
+  ACTIVE
+  STALLED
 }
