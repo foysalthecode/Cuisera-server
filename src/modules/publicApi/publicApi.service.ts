@@ -14,4 +14,30 @@ const getSingleMeal = async (mealId: string) => {
   return result;
 };
 
-export const publicApiService = { getAllMeal, getSingleMeal };
+const getAllProviders = async () => {
+  const result = await prisma.user.findMany({
+    where: {
+      role: "PROVIDER",
+    },
+  });
+  return result;
+};
+
+const getSingleProvider = async (providerId: string) => {
+  const result = await prisma.user.findUniqueOrThrow({
+    where: {
+      id: providerId,
+    },
+    include: {
+      meals: true,
+    },
+  });
+  return result;
+};
+
+export const publicApiService = {
+  getAllMeal,
+  getSingleMeal,
+  getAllProviders,
+  getSingleProvider,
+};

@@ -29,4 +29,40 @@ const getSingleMeal = async (req: Request, res: Response) => {
   }
 };
 
-export const publicApiController = { getAllMeal, getSingleMeal };
+const getAllProviders = async (req: Request, res: Response) => {
+  try {
+    const result = await publicApiService.getAllProviders();
+    return res.status(200).json({
+      success: true,
+      message: result,
+    });
+  } catch (err) {
+    return res.status(404).json({
+      success: false,
+      message: { error: err, data: "Coundn't find any data" },
+    });
+  }
+};
+
+const getSingleProvider = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const result = await publicApiService.getSingleProvider(id as string);
+    return res.status(200).json({
+      success: true,
+      message: result,
+    });
+  } catch (err) {
+    return res.status(404).json({
+      success: false,
+      message: { error: err, data: "Coundn't find any data" },
+    });
+  }
+};
+
+export const publicApiController = {
+  getAllMeal,
+  getSingleMeal,
+  getAllProviders,
+  getSingleProvider,
+};
