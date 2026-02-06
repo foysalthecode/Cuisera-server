@@ -9,4 +9,6 @@ router.put("/meals/:id", mealsController.updateMeal);
 
 router.delete("/meals/:id", mealsController.deleteMeal);
 
+router.patch("/orders/:id", mealsController.updateOrderStatus);
+
 export const mealsRoter: Router = router;

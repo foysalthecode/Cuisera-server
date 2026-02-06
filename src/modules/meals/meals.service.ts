@@ -1,6 +1,5 @@
-import { Request, Response } from "express";
 import { prisma } from "../../lib/prisma";
-import { Meals } from "../../../generated/prisma/client";
+import { Meals, Orders } from "../../../generated/prisma/client";
 
 const createMeal = async (payload: Meals) => {
   const result = await prisma.meals.create({
@@ -31,4 +30,19 @@ const deleteMeal = async (mealId: string) => {
   return result;
 };
 
-export const mealsService = { createMeal, updateMeal, deleteMeal };
+const updateOrderStatus = async (orderId: string, data: Partial<Orders>) => {
+  const result = await prisma.orders.update({
+    where: {
+      id: orderId,
+    },
+    data,
+  });
+  return result;
+};
+
+export const mealsService = {
+  createMeal,
+  updateMeal,
+  deleteMeal,
+  updateOrderStatus,
+};
