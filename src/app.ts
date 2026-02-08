@@ -5,6 +5,7 @@ import { mealsRoter } from "./modules/meals/meals.routes";
 import { auth } from "./lib/auth";
 import { orderRouter } from "./modules/orders/orders.routes";
 import { PublicApirouter } from "./modules/publicApi/publicapi.routes";
+import { notFound } from "./middleware/notFound";
 
 const app: Application = express();
 
@@ -31,5 +32,7 @@ app.use("/api", PublicApirouter);
 app.get("/", (req, res) => {
   res.send("Cuisera Server is running");
 });
+
+app.use(notFound);
 
 export default app;

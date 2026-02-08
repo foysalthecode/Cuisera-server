@@ -14,6 +14,7 @@ model User {
   feedbacks     Feedback[]
   meals         Meals[]
   orders        Orders[]
+  carts         Cart[]
 
   @@unique([email])
   @@map("user")

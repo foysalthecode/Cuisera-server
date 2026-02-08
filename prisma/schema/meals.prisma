@@ -6,6 +6,7 @@ model Meals {
     isPublished Boolean    @default(true)
     status      MealStatus @default(PUBLISHED)
     review      String?
+    price       Int
     category    String
     createdAt   DateTime   @default(now())
     updatedAt   DateTime   @updatedAt
@@ -13,6 +14,7 @@ model Meals {
     user        User       @relation(fields: [userId], references: [id])
     orders      Orders[]
     feedback    Feedback[]
+    carts       Cart[]
 }
 
 enum MealStatus {
