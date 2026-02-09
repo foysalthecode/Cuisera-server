@@ -40,7 +40,20 @@ const updateMeal = async (
   return result;
 };
 
-const deleteMeal = async (mealId: string) => {
+const deleteMeal = async (mealId: string, providerId: string) => {
+  const provider = await prisma.meals.findUniqueOrThrow({
+    where: {
+      id: mealId,
+    },
+    select: {
+      userId: true,
+    },
+  });
+
+  if (provider.userId !== providerId) {
+    throw new Error("Unable to Delete!! You do not own this Meal");
+  }
+
   const result = await prisma.meals.delete({
     where: {
       id: mealId,

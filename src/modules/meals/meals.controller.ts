@@ -52,16 +52,22 @@ const updateMeal = async (req: Request, res: Response) => {
 
 const deleteMeal = async (req: Request, res: Response) => {
   try {
+    const user = req.user;
     const { id } = req.params;
-    const result = await mealsService.deleteMeal(id as string);
+    const result = await mealsService.deleteMeal(
+      id as string,
+      user?.id as string,
+    );
     return res.status(200).json({
       success: true,
       data: { result: result, message: "Deleted Successfully" },
     });
   } catch (err) {
+    const errorMessage =
+      err instanceof Error ? err.message : "Meal Delete Failed";
     return res.status(400).json({
       success: false,
-      data: { error: err, message: "delete Operation Unsuccessfull" },
+      data: { error: errorMessage, message: err },
     });
   }
 };
