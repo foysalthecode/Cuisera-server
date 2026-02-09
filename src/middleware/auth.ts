@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { auth as betterAuth } from "../lib/auth";
+
 export enum UserRole {
   USER = "USER",
   ADMIN = "ADMIN",
@@ -23,9 +24,12 @@ declare global {
 const auth = (...roles: UserRole[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
+      // console.log("headers from midd auth", req.headers);
       const session = await betterAuth.api.getSession({
         headers: req.headers as any,
       });
+
+      // console.log("session from midd auth", session);
 
       if (!session) {
         return res.status(401).json({
@@ -45,7 +49,7 @@ const auth = (...roles: UserRole[]) => {
         id: session?.user?.id as string,
         email: session?.user?.email as string,
         name: session?.user?.name as string,
-        role: session?.user?.id as string,
+        role: session?.user?.role as string,
         emailVerified: session?.user?.emailVerified as boolean,
       };
 

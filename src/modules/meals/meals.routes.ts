@@ -1,9 +1,10 @@
 import express, { Router } from "express";
 import { mealsController } from "./meals.controller";
+import auth, { UserRole } from "../../middleware/auth";
 
 const router = express.Router();
 
-router.post("/meals", mealsController.createMeal);
+router.post("/meals", auth(UserRole.PROVIDER), mealsController.createMeal);
 
 router.put("/meals/:id", mealsController.updateMeal);
 

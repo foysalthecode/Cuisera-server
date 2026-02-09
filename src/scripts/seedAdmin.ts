@@ -9,7 +9,7 @@ async function seedAdmin() {
       email: "admin.foysal@gmail.com",
       role: UserRole.ADMIN,
       password: "admin1234",
-      phone:"01869631974"
+      phone: "01869631974",
     };
 
     console.log("**** Cheching Admin Exists  or Not ****");
@@ -24,6 +24,9 @@ async function seedAdmin() {
       throw new Error("User already exists");
     }
 
+    console.log("**** No Admin Found ****");
+    console.log("**** Creating Admin ****");
+
     const signUpAdmin = await fetch(
       "http://localhost:5000/api/auth/sign-up/email",
       {
@@ -36,8 +39,8 @@ async function seedAdmin() {
       },
     );
 
+    console.log("**** Admin Created ****");
     if (signUpAdmin.ok) {
-      console.log("**** Admin Created ****");
       await prisma.user.update({
         where: {
           email: adminData.email,
@@ -46,7 +49,7 @@ async function seedAdmin() {
           emailVerified: true,
         },
       });
-      console.log("**** Email Varification Status Updated");
+      console.log("**** Email Varification Status Updated ****");
     }
     console.log("***** SUCCESSFULLY SEEDED ADMIN *****");
   } catch (err) {

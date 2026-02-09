@@ -1,12 +1,26 @@
 import { Request, Response } from "express";
 import { mealsService } from "./meals.service";
+import { UserRole } from "../../middleware/auth";
 
 const createMeal = async (req: Request, res: Response) => {
   try {
-    const result = await mealsService.createMeal(req.body);
-    return res.status(201).json(result);
+    const user = req.user;
+    if (!user) {
+      throw new Error("User not found,login to procced");
+    }
+    const isProvider = user?.role === UserRole.PROVIDER;
+    const result = await mealsService.createMeal(req.body, isProvider);
+    return res.status(201).json({
+      success: true,
+      data: result,
+    });
   } catch (err) {
-    return res.status(400).json(err);
+    const erroMessage =
+      err instanceof Error ? err.message : "Couldn't Create Meal";
+    return res.status(400).json({
+      success: false,
+      data: { error: erroMessage, message: err },
+    });
   }
 };
 
@@ -21,7 +35,7 @@ const updateMeal = async (req: Request, res: Response) => {
   } catch (err) {
     return res.status(400).json({
       success: false,
-      message: err,
+      data: { error: err, message: "Unable to Update Meal" },
     });
   }
 };

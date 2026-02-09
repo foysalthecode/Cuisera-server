@@ -1,7 +1,11 @@
 import { prisma } from "../../lib/prisma";
 import { Meals, Orders } from "../../../generated/prisma/client";
 
-const createMeal = async (payload: Meals) => {
+const createMeal = async (payload: Meals, isProvider: boolean) => {
+  if (!isProvider) {
+    throw new Error("You Are not a Provider/owner");
+  }
+
   const result = await prisma.meals.create({
     data: {
       ...payload,
