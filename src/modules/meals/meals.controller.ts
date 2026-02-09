@@ -74,16 +74,23 @@ const deleteMeal = async (req: Request, res: Response) => {
 
 const updateOrderStatus = async (req: Request, res: Response) => {
   try {
+    const user = req.user;
     const { id } = req.params;
-    const result = await mealsService.updateOrderStatus(id as string, req.body);
+    const result = await mealsService.updateOrderStatus(
+      id as string,
+      req.body,
+      user?.id as string,
+    );
     return res.status(200).json({
       success: true,
       data: { result: result, message: "Updated Successfully" },
     });
   } catch (err) {
+    const errorMessage =
+      err instanceof Error ? err.message : "Status Update Unsuccessfull";
     return res.status(400).json({
       success: false,
-      data: { error: err, message: "Order Update Unsuccessfull" },
+      data: { error: errorMessage, message: err },
     });
   }
 };

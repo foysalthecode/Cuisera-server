@@ -62,7 +62,24 @@ const deleteMeal = async (mealId: string, providerId: string) => {
   return result;
 };
 
-const updateOrderStatus = async (orderId: string, data: Partial<Orders>) => {
+const updateOrderStatus = async (
+  orderId: string,
+  data: Partial<Orders>,
+  providerId: string,
+) => {
+  const provider = await prisma.orders.findUniqueOrThrow({
+    where: {
+      id: orderId,
+    },
+    select: {
+      userId: true,
+    },
+  });
+
+  if (provider.userId !== providerId) {
+    throw new Error("Unable to Update Status!! You do not own this Meal");
+  }
+
   const result = await prisma.orders.update({
     where: {
       id: orderId,

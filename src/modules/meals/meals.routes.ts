@@ -14,6 +14,10 @@ router.delete(
   mealsController.deleteMeal,
 );
 
-router.patch("/orders/:id", mealsController.updateOrderStatus);
+router.patch(
+  "/orders/:id",
+  auth(UserRole.PROVIDER),
+  mealsController.updateOrderStatus,
+);
 
 export const mealsRoter: Router = router;
