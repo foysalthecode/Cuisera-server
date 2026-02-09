@@ -26,16 +26,26 @@ const createMeal = async (req: Request, res: Response) => {
 
 const updateMeal = async (req: Request, res: Response) => {
   try {
+    const user = req.user;
+    if (!user) {
+      throw new Error("unable to update.Login to Procced");
+    }
     const { id } = req.params;
-    const result = await mealsService.updateMeal(id as string, req.body);
+    const result = await mealsService.updateMeal(
+      id as string,
+      req.body,
+      user.id,
+    );
     return res.status(200).json({
       success: true,
       data: { result: result, message: "Updated Successfully" },
     });
   } catch (err) {
+    const erroMessage =
+      err instanceof Error ? err.message : "Meal Update Failed";
     return res.status(400).json({
       success: false,
-      data: { error: err, message: "Unable to Update Meal" },
+      data: { error: erroMessage, message: err },
     });
   }
 };

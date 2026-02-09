@@ -5,17 +5,32 @@ const createMeal = async (payload: Meals, isProvider: boolean) => {
   if (!isProvider) {
     throw new Error("You Are not a Provider/owner");
   }
-
   const result = await prisma.meals.create({
     data: {
       ...payload,
     },
   });
   return result;
-  //   console.log(data);
 };
 
-const updateMeal = async (mealId: string, data: Partial<Meals>) => {
+const updateMeal = async (
+  mealId: string,
+  data: Partial<Meals>,
+  providerId: string,
+) => {
+  const mealData = await prisma.meals.findUniqueOrThrow({
+    where: {
+      id: mealId,
+    },
+    select: {
+      userId: true,
+    },
+  });
+
+  if (mealData.userId !== providerId) {
+    throw new Error("You Donot Own this Meal");
+  }
+
   const result = await prisma.meals.update({
     where: {
       id: mealId,

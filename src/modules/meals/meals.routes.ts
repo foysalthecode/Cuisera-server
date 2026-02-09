@@ -6,9 +6,13 @@ const router = express.Router();
 
 router.post("/meals", auth(UserRole.PROVIDER), mealsController.createMeal);
 
-router.put("/meals/:id", mealsController.updateMeal);
+router.put("/meals/:id", auth(UserRole.PROVIDER), mealsController.updateMeal);
 
-router.delete("/meals/:id", mealsController.deleteMeal);
+router.delete(
+  "/meals/:id",
+  auth(UserRole.PROVIDER),
+  mealsController.deleteMeal,
+);
 
 router.patch("/orders/:id", mealsController.updateOrderStatus);
 
