@@ -119,5 +119,5 @@ export const mealsController = {
   updateMeal,
   deleteMeal,
   updateOrderStatus,
-  viewIncomingOrders,
+  viewIncomingOrders
 };

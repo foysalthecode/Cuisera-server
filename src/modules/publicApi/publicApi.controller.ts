@@ -60,9 +60,31 @@ const getSingleProvider = async (req: Request, res: Response) => {
   }
 };
 
+const addMealsToCart = async (req: Request, res: Response) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      return res.status(403).json({
+        message: "Unauthorizes access. Login to continue",
+      });
+    }
+    const result = await publicApiService.addMealsToCart(req.body);
+    return res.status(201).json({
+      success: true,
+      data: { resutl: result, message: "Added to Cart" },
+    });
+  } catch (err) {
+    return res.status(404).json({
+      success: false,
+      message: err,
+    });
+  }
+};
+
 export const publicApiController = {
   getAllMeal,
   getSingleMeal,
   getAllProviders,
   getSingleProvider,
+  addMealsToCart,
 };

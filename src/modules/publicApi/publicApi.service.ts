@@ -1,3 +1,4 @@
+import { Cart } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 
 const getAllMeal = async () => {
@@ -35,9 +36,20 @@ const getSingleProvider = async (providerId: string) => {
   return result;
 };
 
+const addMealsToCart = async (payload: Cart) => {
+  const result = await prisma.cart.create({
+    data: {
+      ...payload,
+    },
+  });
+
+  return result;
+};
+
 export const publicApiService = {
   getAllMeal,
   getSingleMeal,
   getAllProviders,
   getSingleProvider,
+  addMealsToCart,
 };

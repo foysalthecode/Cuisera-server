@@ -12,6 +12,7 @@ router.get(
 
 router.post("/meals", auth(UserRole.PROVIDER), mealsController.createMeal);
 
+
 router.put("/meals/:id", auth(UserRole.PROVIDER), mealsController.updateMeal);
 
 router.delete(
