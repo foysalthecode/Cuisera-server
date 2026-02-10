@@ -1,6 +1,6 @@
 model Feedback {
     id      String @id @default(uuid())
-    content String
+    content String @db.Text
     review  Int
     userId  String
     user    User   @relation(fields: [userId], references: [id])

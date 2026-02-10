@@ -16,21 +16,6 @@ const createOrder = async (req: Request, res: Response) => {
   }
 };
 
-const getAllOrders = async (req: Request, res: Response) => {
-  try {
-    const result = await orderService.getAllOrders();
-    return res.status(200).json({
-      success: true,
-      data: result,
-    });
-  } catch (err) {
-    return res.status(404).json({
-      success: false,
-      message: err,
-    });
-  }
-};
-
 const getOwnOrders = async (req: Request, res: Response) => {
   try {
     const user = req.user;
@@ -47,4 +32,4 @@ const getOwnOrders = async (req: Request, res: Response) => {
   }
 };
 
-export const orderController = { createOrder, getAllOrders, getOwnOrders };
+export const orderController = { createOrder, getOwnOrders };
