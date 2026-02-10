@@ -95,9 +95,29 @@ const updateOrderStatus = async (req: Request, res: Response) => {
   }
 };
 
+const viewIncomingOrders = async (req: Request, res: Response) => {
+  try {
+    const user = req.user;
+    const result = await mealsService.viewIncomingOrders(user?.id as string);
+    return res.status(200).json({
+      success: true,
+      data: { result: result, message: "Order Retirve Successfully" },
+    });
+  } catch (err) {
+    const errorMessage =
+      err instanceof Error ? err.message : "Unathorized access";
+
+    return res.status(403).json({
+      success: false,
+      data: { error: errorMessage, messsage: err },
+    });
+  }
+};
+
 export const mealsController = {
   createMeal,
   updateMeal,
   deleteMeal,
   updateOrderStatus,
+  viewIncomingOrders,
 };

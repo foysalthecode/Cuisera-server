@@ -1,9 +1,9 @@
 import { prisma } from "../../lib/prisma";
-import { Meals, Orders } from "../../../generated/prisma/client";
+import { Meals, Orders, userStatus } from "../../../generated/prisma/client";
 
 const createMeal = async (payload: Meals, isProvider: boolean) => {
   if (!isProvider) {
-    throw new Error("You Are not a Provider/owner");
+    throw new Error("You Are not a Provider");
   }
   const result = await prisma.meals.create({
     data: {
@@ -89,9 +89,39 @@ const updateOrderStatus = async (
   return result;
 };
 
+const viewIncomingOrders = async (providerId: string) => {
+  await prisma.user.findUniqueOrThrow({
+    where: {
+      id: providerId,
+      status: userStatus.ACTIVE,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  const orders = await prisma.orders.findMany({
+    where: {
+      meals: {
+        userId: providerId,
+      },
+    },
+    include: {
+      meals: {
+        select: {
+          title: true,
+        },
+      },
+    },
+  });
+
+  return orders;
+};
+
 export const mealsService = {
   createMeal,
   updateMeal,
   deleteMeal,
   updateOrderStatus,
+  viewIncomingOrders,
 };
