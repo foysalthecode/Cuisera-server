@@ -1,8 +1,31 @@
 import { Cart } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
 
-const getAllMeal = async () => {
-  const result = await prisma.meals.findMany();
+const getAllMeal = async (payload: {
+  search?: string | undefined;
+  sortOrder?: string | undefined;
+}) => {
+  const result = await prisma.meals.findMany({
+    where: {
+      OR: [
+        {
+          title: {
+            contains: payload.search as string,
+            mode: "insensitive",
+          },
+        },
+        {
+          category: {
+            contains: payload.search as string,
+            mode: "insensitive",
+          },
+        },
+      ],
+    },
+    // orderBy: {
+    //   price: payload.sortOrder,
+    // },
+  });
   return result;
 };
 

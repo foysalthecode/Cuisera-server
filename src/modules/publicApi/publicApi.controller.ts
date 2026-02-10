@@ -3,7 +3,15 @@ import { publicApiService } from "./publicApi.service";
 
 const getAllMeal = async (req: Request, res: Response) => {
   try {
-    const result = await publicApiService.getAllMeal();
+    const { search } = req.query;
+    const searchString = typeof search === "string" ? search : undefined;
+
+    const sort = req.query.sort;
+    const sortOrder = sort === "desc" ? "desc" : "asc";
+    const result = await publicApiService.getAllMeal({
+      search: searchString,
+      sortOrder,
+    });
     return res.status(200).json({
       success: true,
       message: result,
