@@ -1,31 +1,50 @@
 import { Cart } from "../../../generated/prisma/client";
+import { MealsWhereInput } from "../../../generated/prisma/models";
 import { prisma } from "../../lib/prisma";
 
-const getAllMeal = async (payload: {
-  search?: string | undefined;
-  sortOrder?: string | undefined;
+const getAllMeal = async ({
+  search,
+  sortOrder,
+  page,
+  limit,
+  skip,
+}: {
+  search: string | undefined;
+  sortOrder: "asc" | "desc" | undefined;
+  page: number;
+  limit: number;
+  skip: number;
 }) => {
-  const result = await prisma.meals.findMany({
-    where: {
+  const andConditions: MealsWhereInput[] = [];
+
+  if (search) {
+    andConditions.push({
       OR: [
         {
           title: {
-            contains: payload.search as string,
+            contains: search as string,
             mode: "insensitive",
           },
         },
         {
           category: {
-            contains: payload.search as string,
+            contains: search as string,
             mode: "insensitive",
           },
         },
       ],
+    });
+  }
+
+  const result = await prisma.meals.findMany({
+    take: limit,
+    skip: skip,
+    where: {
+      AND: andConditions,
     },
-    // orderBy: {
-    //   price: payload.sortOrder,
-    // },
+    orderBy: sortOrder ? { price: sortOrder || "desc" } : { createdAt: "desc" },
   });
+
   return result;
 };
 

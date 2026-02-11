@@ -1,16 +1,20 @@
 import { Request, Response } from "express";
 import { publicApiService } from "./publicApi.service";
+import paginationSortingHelper from "../../helper/paginationSortinghelper";
 
 const getAllMeal = async (req: Request, res: Response) => {
   try {
     const { search } = req.query;
     const searchString = typeof search === "string" ? search : undefined;
 
-    const sort = req.query.sort;
-    const sortOrder = sort === "desc" ? "desc" : "asc";
+    const { page, limit, skip, sortOrder } = paginationSortingHelper(req.query);
+
     const result = await publicApiService.getAllMeal({
       search: searchString,
       sortOrder,
+      page,
+      limit,
+      skip,
     });
     return res.status(200).json({
       success: true,
