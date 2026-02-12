@@ -45,7 +45,16 @@ const getAllMeal = async ({
     orderBy: sortOrder ? { price: sortOrder || "desc" } : { createdAt: "desc" },
   });
 
-  return result;
+  const total = await prisma.meals.count({
+    where: {
+      AND: andConditions,
+    },
+  });
+
+  return {
+    data: result,
+    pagination: { total, page, limit, totalPage: Math.ceil(total / limit) },
+  };
 };
 
 const getSingleMeal = async (mealId: string) => {
