@@ -8,6 +8,7 @@ import { PublicApirouter } from "./modules/publicApi/publicapi.routes";
 import { notFound } from "./middleware/notFound";
 import { feedBackRouter } from "./modules/feedback/feedback.routes";
 import { adminControllRouter } from "./modules/adminControll/adminControll.routes";
+import profile from "./modules/profile/profile";
 
 const app: Application = express();
 
@@ -37,6 +38,10 @@ app.use("/api", PublicApirouter);
 
 //feedback routes
 app.use("/api/feedback", feedBackRouter);
+
+//profile
+
+app.get("/api/my-profile", profile);
 
 app.get("/", (req, res) => {
   res.send("Cuisera Server is running");
