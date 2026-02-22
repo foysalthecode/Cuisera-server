@@ -9,7 +9,8 @@ import { notFound } from "./middleware/notFound";
 import { feedBackRouter } from "./modules/feedback/feedback.routes";
 import { adminControllRouter } from "./modules/adminControll/adminControll.routes";
 import profile from "./modules/profile/profile";
-
+import { UserRole } from "./middleware/auth";
+import authentication from "./middleware/auth";
 const app: Application = express();
 
 app.use(express.json());
@@ -41,7 +42,11 @@ app.use("/api/feedback", feedBackRouter);
 
 //profile
 
-app.get("/api/my-profile", profile);
+app.get(
+  "/api/my-profile",
+  authentication(UserRole.ADMIN, UserRole.USER, UserRole.PROVIDER),
+  profile,
+);
 
 app.get("/", (req, res) => {
   res.send("Cuisera Server is running");
