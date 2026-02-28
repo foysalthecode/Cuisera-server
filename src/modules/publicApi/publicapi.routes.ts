@@ -12,6 +12,22 @@ router.get("/providers", publicApiController.getAllProviders);
 
 router.get("/providers/:id", publicApiController.getSingleProvider);
 
-router.post("/cart", auth(UserRole.USER), publicApiController.addMealsToCart);
+router.get(
+  "/cart",
+  auth(UserRole.USER, UserRole.PROVIDER),
+  publicApiController.getCart,
+);
+
+router.post(
+  "/cart",
+  auth(UserRole.USER, UserRole.PROVIDER),
+  publicApiController.addMealsToCart,
+);
+
+router.delete(
+  "/cart/:cartId",
+  auth(UserRole.USER),
+  publicApiController.deleteFromCart,
+);
 
 export const PublicApirouter: Router = router;

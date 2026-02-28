@@ -4,6 +4,7 @@ model Meals {
     description String     @db.Text
     thumbnail   String?
     isPublished Boolean    @default(true)
+    isFeatured  Boolean    @default(false)
     status      MealStatus @default(PUBLISHED)
     review      String?
     price       Int

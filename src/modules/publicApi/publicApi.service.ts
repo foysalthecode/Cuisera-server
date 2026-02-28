@@ -97,10 +97,40 @@ const addMealsToCart = async (payload: Cart) => {
   return result;
 };
 
+const getCart = async (userId: string) => {
+  const result = await prisma.cart.findMany({
+    where: {
+      userId,
+    },
+    include: {
+      meal: {
+        select: {
+          title: true,
+          thumbnail: true,
+          price: true,
+        },
+      },
+    },
+  });
+  return result;
+};
+
+const deleteFromCart = async (mealId: string, userId: string) => {
+  const result = await prisma.cart.delete({
+    where: {
+      id: mealId,
+      userId,
+    },
+  });
+  return result;
+};
+
 export const publicApiService = {
   getAllMeal,
   getSingleMeal,
   getAllProviders,
   getSingleProvider,
+  getCart,
   addMealsToCart,
+  deleteFromCart,
 };

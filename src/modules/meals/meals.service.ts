@@ -1,9 +1,5 @@
 import { prisma } from "../../lib/prisma";
-import {
-  Meals,
-  Orders,
-  userStatus,
-} from "../../../generated/prisma/client";
+import { Meals, Orders, userStatus } from "../../../generated/prisma/client";
 
 const createMeal = async (payload: Meals, isProvider: boolean) => {
   if (!isProvider) {
@@ -127,5 +123,5 @@ export const mealsService = {
   updateMeal,
   deleteMeal,
   updateOrderStatus,
-  viewIncomingOrders
+  viewIncomingOrders,
 };

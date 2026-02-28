@@ -13,7 +13,7 @@ type IoptionsResult = {
 
 const paginationSortingHelper = (options: Ioptions): IoptionsResult => {
   const page: number = Number(options.page) || 1;
-  const limit: number = Number(options.limit) || 10;
+  const limit: number = Number(options.limit) || 8;
   const skip = (page - 1) * limit;
 
   const sortOrder: "asc" | "desc" | undefined =
