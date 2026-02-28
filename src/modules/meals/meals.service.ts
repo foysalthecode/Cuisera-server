@@ -71,12 +71,18 @@ const updateOrderStatus = async (
     where: {
       id: orderId,
     },
-    select: {
-      userId: true,
+    include: {
+      meals: {
+        select: {
+          userId: true,
+        },
+      },
     },
   });
 
-  if (provider.userId !== providerId) {
+  console.log(provider.meals.userId);
+
+  if (provider.meals.userId !== providerId) {
     throw new Error("Unable to Update Status!! You do not own this Meal");
   }
 
