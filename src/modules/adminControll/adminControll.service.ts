@@ -2,7 +2,18 @@ import { userStatus } from "../../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
 
 const getAllOrders = async () => {
-  const result = await prisma.orders.findMany();
+  const result = await prisma.orders.findMany({
+    include: {
+      meals: {
+        select: {
+          title: true,
+          price: true,
+          isPublished: true,
+          createdAt: true,
+        },
+      },
+    },
+  });
   return result;
 };
 

@@ -76,7 +76,6 @@ const updateOrderStatus = async (req: Request, res: Response) => {
   try {
     const user = req.user;
     const { id } = req.params;
-    console.log("from meal control", user,id);
     const result = await mealsService.updateOrderStatus(
       id as string,
       req.body,

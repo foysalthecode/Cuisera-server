@@ -14,7 +14,7 @@ router.get("/providers/:id", publicApiController.getSingleProvider);
 
 router.get(
   "/cart",
-  auth(UserRole.USER, UserRole.PROVIDER),
+  auth(UserRole.USER, UserRole.PROVIDER, UserRole.ADMIN),
   publicApiController.getCart,
 );
 

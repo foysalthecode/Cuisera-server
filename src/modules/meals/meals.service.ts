@@ -99,7 +99,6 @@ const viewIncomingOrders = async (providerId: string) => {
   await prisma.user.findUniqueOrThrow({
     where: {
       id: providerId,
-      status: userStatus.ACTIVE,
     },
     select: {
       id: true,

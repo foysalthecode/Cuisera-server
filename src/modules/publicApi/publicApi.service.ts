@@ -42,6 +42,13 @@ const getAllMeal = async ({
     where: {
       AND: andConditions,
     },
+    include: {
+      user: {
+        select: {
+          name: true,
+        },
+      },
+    },
     orderBy: sortOrder ? { price: sortOrder || "desc" } : { createdAt: "desc" },
   });
 

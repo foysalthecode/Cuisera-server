@@ -15,6 +15,14 @@ const getOwnOrders = async (userId: string) => {
     where: {
       userId,
     },
+    include: {
+      meals: {
+        select: {
+          title: true,
+          price: true,
+        },
+      },
+    },
   });
   return result;
 };
