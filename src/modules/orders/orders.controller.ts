@@ -32,4 +32,26 @@ const getOwnOrders = async (req: Request, res: Response) => {
   }
 };
 
-export const orderController = { createOrder, getOwnOrders };
+const deleteOwnOrder = async (req: Request, res: Response) => {
+  try {
+    const user = req.user;
+    const orderId = req?.params?.id as string;
+    const result = await orderService.deleteOwnOrder(
+      user?.id as string,
+      orderId,
+    );
+    return res.status(200).json({
+      success: true,
+      data: result,
+    });
+  } catch (err) {
+    const errorMessage =
+      err instanceof Error ? err.message : "Order Delete Failed";
+    return res.status(403).json({
+      success: false,
+      message: { error: errorMessage, message: err },
+    });
+  }
+};
+
+export const orderController = { createOrder, getOwnOrders, deleteOwnOrder };
