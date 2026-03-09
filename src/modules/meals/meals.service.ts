@@ -13,6 +13,15 @@ const createMeal = async (payload: Meals, isProvider: boolean) => {
   return result;
 };
 
+const getOwnMeal = async (providerId: string) => {
+  const result = await prisma.meals.findMany({
+    where: {
+      userId: providerId,
+    },
+  });
+  return result;
+};
+
 const updateMeal = async (
   mealId: string,
   data: Partial<Meals>,
@@ -99,7 +108,7 @@ const viewIncomingOrders = async (providerId: string) => {
   await prisma.user.findUniqueOrThrow({
     where: {
       id: providerId,
-      status: userStatus.ACTIVE
+      status: userStatus.ACTIVE,
     },
     select: {
       id: true,
@@ -125,9 +134,10 @@ const viewIncomingOrders = async (providerId: string) => {
 };
 
 export const mealsService = {
+  getOwnMeal,
   createMeal,
   updateMeal,
   deleteMeal,
   updateOrderStatus,
-  viewIncomingOrders
+  viewIncomingOrders,
 };

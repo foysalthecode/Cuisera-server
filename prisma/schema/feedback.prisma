@@ -1,11 +1,11 @@
 model Feedback {
-    id      String @id @default(uuid())
+    id      String  @id @default(uuid())
     content String @db.Text
     review  Int
     userId  String
-    user    User   @relation(fields: [userId], references: [id])
+    user    User    @relation(fields: [userId], references: [id])
     mealId  String
-    meal    Meals  @relation(fields: [mealId], references: [id])
+    meal    Meals   @relation(fields: [mealId], references: [id])
 
     @@index([userId])
     @@index([mealId])

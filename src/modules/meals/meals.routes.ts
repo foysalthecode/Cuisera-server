@@ -10,8 +10,9 @@ router.get(
   mealsController.viewIncomingOrders,
 );
 
-router.post("/meals", auth(UserRole.PROVIDER), mealsController.createMeal);
+router.get("/meals", auth(UserRole.PROVIDER), mealsController.getOwnMeal);
 
+router.post("/meals", auth(UserRole.PROVIDER), mealsController.createMeal);
 
 router.put("/meals/:id", auth(UserRole.PROVIDER), mealsController.updateMeal);
 

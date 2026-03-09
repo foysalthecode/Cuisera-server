@@ -24,6 +24,22 @@ const createMeal = async (req: Request, res: Response) => {
   }
 };
 
+const getOwnMeal = async (req: Request, res: Response) => {
+  try {
+    const user = req.user;
+    const result = await mealsService.getOwnMeal(user?.id as string);
+    return res.status(200).json({
+      success: true,
+      data: result,
+    });
+  } catch (err) {
+    return res.status(400).json({
+      success: false,
+      message: "Cannot Get Data",
+    });
+  }
+};
+
 const updateMeal = async (req: Request, res: Response) => {
   try {
     const user = req.user;
@@ -115,6 +131,7 @@ const viewIncomingOrders = async (req: Request, res: Response) => {
 };
 
 export const mealsController = {
+  getOwnMeal,
   createMeal,
   updateMeal,
   deleteMeal,
