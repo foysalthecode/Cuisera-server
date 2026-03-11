@@ -62,6 +62,12 @@ var TransactionIsolationLevel = runtime2.makeStrictEnum({
 });
 var defineExtension = runtime2.Extensions.defineExtension;
 
+// generated/prisma/enums.ts
+var userStatus = {
+  ACTIVE: "ACTIVE",
+  STALLED: "STALLED"
+};
+
 // generated/prisma/client.ts
 globalThis["__dirname"] = path.dirname(fileURLToPath(import.meta.url));
 var PrismaClient = getPrismaClientClass();
@@ -79,6 +85,14 @@ var createMeal = async (payload, isProvider) => {
   const result = await prisma.meals.create({
     data: {
       ...payload
+    }
+  });
+  return result;
+};
+var getOwnMeal = async (providerId) => {
+  const result = await prisma.meals.findMany({
+    where: {
+      userId: providerId
     }
   });
   return result;
@@ -150,7 +164,8 @@ var updateOrderStatus = async (orderId, data, providerId) => {
 var viewIncomingOrders = async (providerId) => {
   await prisma.user.findUniqueOrThrow({
     where: {
-      id: providerId
+      id: providerId,
+      status: userStatus.ACTIVE
     },
     select: {
       id: true
@@ -173,6 +188,7 @@ var viewIncomingOrders = async (providerId) => {
   return orders;
 };
 var mealsService = {
+  getOwnMeal,
   createMeal,
   updateMeal,
   deleteMeal,
@@ -200,6 +216,20 @@ var auth = betterAuth({
     // or "mysql", "postgresql", ...etc
   }),
   trustedOrigins: [process.env.APP_URL],
+  session: {
+    cookieCache: {
+      enabled: true,
+      maxAge: 5 * 60
+    }
+  },
+  advanced: {
+    cookiePrefix: "better-auth",
+    useSecureCookies: process.env.NODE_ENV === "production",
+    crossSubDomainCookies: {
+      enabled: true
+    },
+    disableCSRFCheck: true
+  },
   user: {
     additionalFields: {
       role: {
@@ -219,8 +249,8 @@ var auth = betterAuth({
     }
   },
   emailAndPassword: {
-    enabled: true,
-    requireEmailVerification: true
+    enabled: true
+    // requireEmailVerification: true,
   },
   emailVerification: {
     sendVerificationEmail: async ({ user, url, token }, request) => {
@@ -388,6 +418,21 @@ var createMeal2 = async (req, res) => {
     });
   }
 };
+var getOwnMeal2 = async (req, res) => {
+  try {
+    const user = req.user;
+    const result = await mealsService.getOwnMeal(user?.id);
+    return res.status(200).json({
+      success: true,
+      data: result
+    });
+  } catch (err) {
+    return res.status(400).json({
+      success: false,
+      message: "Cannot Get Data"
+    });
+  }
+};
 var updateMeal2 = async (req, res) => {
   try {
     const user = req.user;
@@ -470,6 +515,7 @@ var viewIncomingOrders2 = async (req, res) => {
   }
 };
 var mealsController = {
+  getOwnMeal: getOwnMeal2,
   createMeal: createMeal2,
   updateMeal: updateMeal2,
   deleteMeal: deleteMeal2,
@@ -484,6 +530,7 @@ router.get(
   auth_default("PROVIDER" /* PROVIDER */),
   mealsController.viewIncomingOrders
 );
+router.get("/meals", auth_default("PROVIDER" /* PROVIDER */), mealsController.getOwnMeal);
 router.post("/meals", auth_default("PROVIDER" /* PROVIDER */), mealsController.createMeal);
 router.put("/meals/:id", auth_default("PROVIDER" /* PROVIDER */), mealsController.updateMeal);
 router.delete(
@@ -526,7 +573,26 @@ var getOwnOrders = async (userId) => {
   });
   return result;
 };
-var orderService = { createOrder, getOwnOrders };
+var deleteOwnOrder = async (userId, orderId) => {
+  const owner = await prisma.orders.findUniqueOrThrow({
+    where: {
+      id: orderId
+    },
+    select: {
+      userId: true
+    }
+  });
+  if (owner.userId !== userId) {
+    throw new Error("You do not own this order");
+  }
+  const result = await prisma.orders.delete({
+    where: {
+      id: orderId
+    }
+  });
+  return result;
+};
+var orderService = { createOrder, getOwnOrders, deleteOwnOrder };
 
 // src/modules/orders/orders.controller.ts
 var createOrder2 = async (req, res) => {
@@ -558,12 +624,33 @@ var getOwnOrders2 = async (req, res) => {
     });
   }
 };
-var orderController = { createOrder: createOrder2, getOwnOrders: getOwnOrders2 };
+var deleteOwnOrder2 = async (req, res) => {
+  try {
+    const user = req.user;
+    const orderId = req?.params?.id;
+    const result = await orderService.deleteOwnOrder(
+      user?.id,
+      orderId
+    );
+    return res.status(200).json({
+      success: true,
+      data: result
+    });
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : "Order Delete Failed";
+    return res.status(403).json({
+      success: false,
+      message: { error: errorMessage, message: err }
+    });
+  }
+};
+var orderController = { createOrder: createOrder2, getOwnOrders: getOwnOrders2, deleteOwnOrder: deleteOwnOrder2 };
 
 // src/modules/orders/orders.routes.ts
 var router2 = express2.Router();
 router2.get("/", auth_default("USER" /* USER */), orderController.getOwnOrders);
 router2.post("/", orderController.createOrder);
+router2.delete("/:id", auth_default("USER" /* USER */), orderController.deleteOwnOrder);
 var orderRouter = router2;
 
 // src/modules/publicApi/publicapi.routes.ts
@@ -1066,13 +1153,37 @@ var profile = async (req, res) => {
 };
 var profile_default = profile;
 
+// src/modules/profile/logout.ts
+var logout = async (req, res) => {
+  const data = await auth.api.signOut({
+    headers: req.headers
+  });
+  return res.status(200).json(data);
+};
+var logout_default = logout;
+
 // src/app.ts
 var app = express5();
+var allowedOrigins = [
+  process.env.APP_URL || "http://localhost:3000",
+  process.env.PROD_APP_URL
+].filter(Boolean);
 app.use(express5.json());
 app.use(
   cors({
-    origin: process.env.APP_URL || "http://localhost:3000",
-    credentials: true
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      const isAllowed = allowedOrigins.includes(origin) || /^https:\/\/next-blog-client.*\.vercel\.app$/.test(origin) || /^https:\/\/.*\.vercel\.app$/.test(origin);
+      if (isAllowed) {
+        callback(null, true);
+      } else {
+        callback(new Error(`Origin ${origin} not allowed by CORS`));
+      }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+    exposedHeaders: ["Set-Cookie"]
   })
 );
 app.all("/api/auth/*splat", toNodeHandler(auth));
@@ -1086,6 +1197,7 @@ app.get(
   auth_default("ADMIN" /* ADMIN */, "USER" /* USER */, "PROVIDER" /* PROVIDER */),
   profile_default
 );
+app.post("/api/logout", logout_default);
 app.get("/", (req, res) => {
   res.send("Cuisera Server is running");
 });
